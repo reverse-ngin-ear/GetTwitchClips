@@ -26,9 +26,9 @@ const colors = require('colors');
 const fetch = require('node-fetch')
 
 
-const ACCESSTOKEN = '3vusn7ptyai1rd3x9gpw466lephwp9'
-const client_id = 'xdqdvkkmb2qb2lo2cyc45q8kg01eiz'
-const client_secret = 'wf4fnz0p0z6gjttb0viaspce21ta1w'
+const ACCESSTOKEN = ''
+const client_id = ''
+const client_secret = ''
 
 const clipslist = [
     {
