@@ -5,7 +5,7 @@ const readline = require('readline').createInterface({
     output: process.stdout
 });
 
-var download = require('file-download')
+const Downloader = require('nodejs-file-downloader');
 
 const fs = require('fs')
 
@@ -32,7 +32,12 @@ const client_secret = ''
 
 const clipslist = [
     {
-        "amount": 2,
+        "amount": 1,
+        "name": "Smajor1995",
+        "alias": "SMajor"
+    },
+    {
+        "amount": 1,
         "name": "Philza",
         "alias": "Philza"
     },
@@ -43,31 +48,26 @@ const clipslist = [
     },
     {
         "amount": 1,
-        "name": "Foolish__Gamers",
-        "alias": "FoolishGamers"
-    },
-    {
-        "amount": 10,
         "name": "RanbooLive",
-        "alias": "Ranboo"
-    },
-    {
-        "amount": 1,
-        "name": "ranboobutnot",
         "alias": "Ranboo"
     },
     {
         "amount": 1,
         "name": "Fundy",
         "alias": "Fundy"
+    },
+    {
+        "amount": 1,
+        "name": "TubboLive",
+        "alias": "Tubbo"
     }
 ]
 
 // To add a new streamer add one of these to the top of the starting []
-    //{
-    //"amount": 1,
-    //"name": "Fundy",
-    //"alias": "Fundy"
+//{
+//"amount": 1,
+//"name": "Fundy",
+//"alias": "Fundy"
 //}
 
 // REMEMBER TO REMOVE THE "//" THEN change the amount to the amount of clips you want from the specified streamer
@@ -213,7 +213,7 @@ async function makecsv(clipsresponse, clipslist) {
 
     }
 }
- 
+
 if (check == 'no') {
     console.error('Amount of requested clips is more than recommended. The recommended amount of clips is 30. \n Please see Index.js:50 to change the recommended amount.. '.red)
 }
@@ -236,6 +236,9 @@ if (check == 'yes') {
         }
     })
 }
+
+var retrycount2 = 1
+var retrycount3 = 1
 
 
 var url = 'ye'
@@ -271,49 +274,136 @@ async function GetandDownloadClips() {
 
                 for (d = 0; d < clipsresponse.clips.length; d++) {
 
-                    url = 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipsresponse.clips[d].tracking_id +'.mp4'
+                    retrycount = Math.floor((Math.random() * 20) + 5);
 
-                    var options = {
-                        directory: "./downloads/",
-                        filename: 'AT-cm_' + clipsresponse.clips[d].tracking_id + '.mp4'
-                    }
+                    var downloader = new Downloader({
+                        url: 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipsresponse.clips[d].tracking_id + '.mp4',//If the file name already exists, a new file with the name 200MB1.zip is created.     
+                        directory: "./downloads",//This folder will be created, if it doesn't exist.               
+                    })
 
-                    if (count6 == 1) {
-                        // error downloading some clips
-                    } else {
-                        download(url, options, function(err){
-                            if (err) {
-                                console.error('There was an error downloading some clips' .red)
-                                count6 = 1
+
+                    
+                    try {
+                        await downloader.download();//Downloader.download() returns a promise.
+
+                        console.log('All done');
+                    } catch (error) {//IMPORTANT: Handle a possible error. An error is thrown in case of network errors, or status codes of 400 and above.
+                        //Note that if the maxAttempts is set to higher than 1, the error is thrown only if all attempts fail.
+                        console.log('Download failed', error)
+
+                        const getclips2 = await fetch(
+                            'https://api.twitch.tv/kraken/clips/top?channel=' + clipslist[i].name + '&period=day&trending=true&limit=' + retrycount,
+                            {
+                                "headers": {
+                                    "Client-ID": client_id,
+                                    "Accept": "application/vnd.twitchtv.v5+json"
+                                }
                             }
-                        }) 
+                        )
+
+
+
+                        var count8 = 0
+
+                        const clipsresponse2 = await getclips2.json()
+
+                        for (y = 0; y < clipsresponse2.clips.length; y++) {
+
+                            
+
+                            retrycount2 = Math.floor((Math.random() * 20) + 5);
+                            
+                            count8 = count8 + 1
+
+                            if (count8 == retrycount2) {
+
+                                downloader = new Downloader({
+                                    url: 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipsresponse2.clips[y].tracking_id + '.mp4',//If the file name already exists, a new file with the name 200MB1.zip is created.     
+                                    directory: "./downloads",//This folder will be created, if it doesn't exist.               
+                                })
     
+                                try {
+                                    await downloader.download();//Downloader.download() returns a promise.
     
-                        const records = [
-                            { titl: clipsresponse.clips[d].title, vid: 'AT-cm_' + clipsresponse.clips[d].tracking_id + '.mp4', alias: clipslist[i].alias, name: 'https://www.twitch.tv/' + clipslist[i].name + '/' },
-                        ];
-                
-                        csvWriter.writeRecords(records)
-                            .then(() => {
-                                //writes csv list
-                            });
-                    }
+                                    console.log('All done');
+                                } catch (error) {//IMPORTANT: Handle a possible error. An error is thrown in case of network errors, or status codes of 400 and above.
+                                    //Note that if the maxAttempts is set to higher than 1, the error is thrown only if all attempts fail.
+                                    console.log('Download failed', error)
+
+                                    const getclips2 = await fetch(
+                                        'https://api.twitch.tv/kraken/clips/top?channel=' + clipslist[i].name + '&period=day&trending=true&limit=' + retrycount2,
+                                        {
+                                            "headers": {
+                                                "Client-ID": client_id,
+                                                "Accept": "application/vnd.twitchtv.v5+json"
+                                            }
+                                        }
+                                    )
             
+             
+            
+                                    var count8 = 0
+            
+                                    const clipsresponse2 = await getclips2.json()
+            
+                                    for (y = 0; y < clipsresponse2.clips.length; y++) {
+
+                                        retrycount3 = Math.floor((Math.random() * 20) + 5);
+            
+                                        
+            
+            
+                                        count8 = count8 + 1
+            
+                                        if (count8 == retrycount3) {
+            
+                                            downloader = new Downloader({
+                                                url: 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipsresponse2.clips[y].tracking_id + '.mp4',//If the file name already exists, a new file with the name 200MB1.zip is created.     
+                                                directory: "./downloads",//This folder will be created, if it doesn't exist.               
+                                            })
+            
+                                            console.log('hey')
+                
+                                            try {
+                                                await downloader.download();//Downloader.download() returns a promise.
+                
+                                                console.log('All done');
+                                            } catch (error) {//IMPORTANT: Handle a possible error. An error is thrown in case of network errors, or status codes of 400 and above.
+                                                //Note that if the maxAttempts is set to higher than 1, the error is thrown only if all attempts fail.
+                                                console.log('Download failed', error)
+                                            }
+            
+                                        }
+                                }
+
+                            }
+
+
+                        }
+
+                    }
+
+
+
+                    const records = [
+                        { titl: clipsresponse.clips[d].title, vid: 'AT-cm_' + clipsresponse.clips[d].tracking_id + '.mp4', alias: clipslist[i].alias, name: 'https://www.twitch.tv/' + clipslist[i].name + '/' },
+                    ];
+
+                    csvWriter.writeRecords(records)
+                        .then(() => {
+                            //writes csv list
+                        });
                 }
-
-                if (count6 == 1) {
-                    console.log(`Most clips have been downloaded.. Find the list and mp4's /downloads..` .yellow)
-                } else {
-                    //
-                }
-
-
 
             }
-            console.log(`All clips have been downloaded.. Some clips may have not..  Find the list and mp4's /downloads..`.green)
         }
+
+
+        }
+        console.log(`All clips have been downloaded.. Some clips may have not..  Find the list and mp4's /downloads..`.green)
     }
 }
+
 
 
 /// HOW TO GET ACCESS TOKEN V V V V V V
