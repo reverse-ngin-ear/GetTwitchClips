@@ -1,11 +1,9 @@
-
-
 const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-const Downloader = require('nodejs-file-downloader');
+var download = require('file-download')
 
 const fs = require('fs')
 
@@ -23,22 +21,16 @@ const csvWriter = createCsvWriter({
 const colors = require('colors');
 
 
-const fetch = require('node-fetch');
-const { count } = require('console');
+const fetch = require('node-fetch')
 
 
-const ACCESSTOKEN = ''
-const client_id = ''
-const client_secret = ''
+const ACCESSTOKEN = '<authtoken>'
+const client_id = '<clientid>'
+const client_secret = '<clientsecret>'
 
 const clipslist = [
     {
-        "amount": 1,
-        "name": "Smajor1995",
-        "alias": "SMajor"
-    },
-    {
-        "amount": 4,
+        "amount": 2,
         "name": "Philza",
         "alias": "Philza"
     },
@@ -48,27 +40,32 @@ const clipslist = [
         "alias": "Tommy"
     },
     {
-        "amount": 3,
+        "amount": 1,
+        "name": "Foolish__Gamers",
+        "alias": "FoolishGamers"
+    },
+    {
+        "amount": 10,
         "name": "RanbooLive",
         "alias": "Ranboo"
     },
     {
-        "amount": 2,
-        "name": "Fundy",
-        "alias": "Fundy"
+        "amount": 1,
+        "name": "ranboobutnot",
+        "alias": "Ranboo"
     },
     {
         "amount": 1,
-        "name": "TubboLive",
-        "alias": "Tubbo"
+        "name": "Fundy",
+        "alias": "Fundy"
     }
 ]
 
 // To add a new streamer add one of these to the top of the starting []
-//{
-//"amount": 1,
-//"name": "Fundy",
-//"alias": "Fundy"
+    //{
+    //"amount": 1,
+    //"name": "Fundy",
+    //"alias": "Fundy"
 //}
 
 // REMEMBER TO REMOVE THE "//" THEN change the amount to the amount of clips you want from the specified streamer
@@ -238,9 +235,6 @@ if (check == 'yes') {
     })
 }
 
-var retrycount2 = 1
-var retrycount3 = 1
-
 
 var url = 'ye'
 
@@ -273,20 +267,25 @@ async function GetandDownloadClips() {
 
                 const clipsresponse = await getclipsss.json()
 
-
                 for (d = 0; d < clipsresponse.clips.length; d++) {
 
-                    const downloader = new Downloader({
-                        url: 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipsresponse.clips[d].tracking_id + '.mp4',//If the file name already exists, a new file with the name 200MB1.zip is created.     
-                        directory: "./downloads",//This folder will be created, if it doesn't exist.               
-                    })
+                    url = 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipsresponse.clips[d].tracking_id +'.mp4'
 
+                    var options = {
+                        directory: "./downloads/",
+                        filename: 'AT-cm_' + clipsresponse.clips[d].tracking_id + '.mp4'
+                    }
 
+                    if (count6 == 1) {
+                        // error downloading some clips
+                    } else {
+                        download(url, options, function(err){
+                            if (err) {
+                                console.error('There was an error downloading some clips' .red)
+                                count6 = 1
+                            }
+                        }) 
 
-                    try {
-                        await downloader.download();//Downloader.download() returns a promise.
-
-                        console.log('All done');
 
                         const records = [
                             { titl: clipsresponse.clips[d].title, vid: 'AT-cm_' + clipsresponse.clips[d].tracking_id + '.mp4', alias: clipslist[i].alias, name: 'https://www.twitch.tv/' + clipslist[i].name + '/' },
@@ -296,145 +295,23 @@ async function GetandDownloadClips() {
                             .then(() => {
                                 //writes csv list
                             });
-                    } catch (error) {
-
-                        const getclipsss22 = await fetch(
-                            'https://api.twitch.tv/kraken/clips/top?channel=' + clipslist[i].name + '&period=day&trending=true&limit=' + '20',
-                            {
-                                "headers": {
-                                    "Client-ID": client_id,
-                                    "Accept": "application/vnd.twitchtv.v5+json"
-                                }
-                            }
-                        )
-
-                        const random = Math.floor(Math.random() * (20 - 2 + 1) + 2);
-
-                        const clipssresponse = await getclipsss22.json()
-
-                        const downloader = new Downloader({
-                            url: 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipssresponse.clips[random].tracking_id + '.mp4',//If the file name already exists, a new file with the name 200MB1.zip is created.     
-                            directory: "./downloads",//This folder will be created, if it doesn't exist.               
-                        })
-
-
-                        try {
-                            await downloader.download();//Downloader.download() returns a promise.
-
-
-                            const records = [
-                                { titl: clipssresponse.clips[random].title, vid: 'AT-cm_' + clipssresponse.clips[random].tracking_id + '.mp4', alias: clipslist[i].alias, name: 'https://www.twitch.tv/' + clipslist[i].name + '/' },
-                            ];
-
-                            csvWriter.writeRecords(records)
-                                .then(() => {
-                                    //writes csv list
-                                });
-                        } catch (error) {
-
-                            var randommm = Math.floor(Math.random() * (20 - 2 + 1) + 2);
-
-                            const downloader = new Downloader({
-                                url: 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipssresponse.clips[randommm].tracking_id + '.mp4',//If the file name already exists, a new file with the name 200MB1.zip is created.     
-                                directory: "./downloads",//This folder will be created, if it doesn't exist.               
-                            })
-
-                            try {
-                                await downloader.download();//Downloader.download() returns a promise.
-
-
-                                const records = [
-                                    { titl: clipssresponse.clips[randommm].title, vid: 'AT-cm_' + clipssresponse.clips[randommm].tracking_id + '.mp4', alias: clipslist[i].alias, name: 'https://www.twitch.tv/' + clipslist[i].name + '/' },
-                                ];
-
-                                csvWriter.writeRecords(records)
-                                    .then(() => {
-                                        //writes csv list
-                                    });
-                            } catch (error) {
-
-                                var randommm2 = Math.floor(Math.random() * (20 - 2 + 1) + 2);
-
-                                const downloader = new Downloader({
-                                    url: 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + clipssresponse.clips[randommm2].tracking_id + '.mp4',//If the file name already exists, a new file with the name 200MB1.zip is created.     
-                                    directory: "./downloads",//This folder will be created, if it doesn't exist.               
-                                })
-
-                                try {
-                                    await downloader.download();//Downloader.download() returns a promise.
-
-
-                                    const records = [
-                                        { titl: clipssresponse.clips[randommm2].title, vid: 'AT-cm_' + clipssresponse.clips[randommm2].tracking_id + '.mp4', alias: clipslist[i].alias, name: 'https://www.twitch.tv/' + clipslist[i].name + '/' },
-                                    ];
-
-                                    csvWriter.writeRecords(records)
-                                        .then(() => {
-                                            //writes csv list
-                                        });
-                                } catch (error) {
-
-
-                                    const getclipsss222 = await fetch(
-                                        'https://api.twitch.tv/kraken/clips/top?channel=' + clipslist[i].name + '&period=day&trending=true&limit=' + clipslist[i].amount + 1,
-                                        {
-                                            "headers": {
-                                                "Client-ID": client_id,
-                                                "Accept": "application/vnd.twitchtv.v5+json"
-                                            }
-                                        }
-                                    )
-
-                                    const responnnnssse = await getclipsss222.json()
-
-                                    const downloader = new Downloader({
-                                        url: 'https://production.assets.clips.twitchcdn.net/AT-cm%7C' + responnnnssse.clips[clipslist[i].amount + 1].tracking_id + '.mp4',//If the file name already exists, a new file with the name 200MB1.zip is created.     
-                                        directory: "./downloads",//This folder will be created, if it doesn't exist.               
-                                    })
-
-
-                                    try {
-                                        await downloader.download();//Downloader.download() returns a promise.
-
-
-                                        const records = [
-                                            { titl: responnnnssse.clips[cliplist[i].amount + 1].title, vid: 'AT-cm_' + responnnnssse.clips[clipslist[i].amount + 1].tracking_id + '.mp4', alias: clipslist[i].alias, name: 'https://www.twitch.tv/' + clipslist[i].name + '/' },
-                                        ];
-
-                                        csvWriter.writeRecords(records)
-                                            .then(() => {
-                                                //writes csv list
-                                            });
-                                    } catch (error) {
-                                        console.error('Tried Several times to download one clip \n ONE CLIP IS MISSING!' .red)
-                                    }
-                                    
-
-
-                                    }
-                            }
-                        }
                     }
-
-                    //IMPORTANT: Handle a possible error. An error is thrown in case of network errors, or status codes of 400 and above.
-                    //Note that if the maxAttempts is set to higher than 1, the error is thrown only if all attempts fail.
 
                 }
 
+                if (count6 == 1) {
+                    console.log(`Most clips have been downloaded.. Find the list and mp4's /downloads..` .yellow)
+                } else {
+                    //
+                }
+
+
+
             }
+            console.log(`All clips have been downloaded.. Some clips may have not..  Find the list and mp4's /downloads..`.green)
         }
     }
 }
-
-
-
-
-
-
-console.log(`All clips have been downloaded.. Some clips may have not..  Find the list and mp4's /downloads..`.green)
-
-
-
 
 
 /// HOW TO GET ACCESS TOKEN V V V V V V
@@ -443,4 +320,4 @@ console.log(`All clips have been downloaded.. Some clips may have not..  Find th
 //method: 'post'
 //}).then(response => response.json()).then(data => console.log(data))
 
-// REMOVE "//" ^^^
+// REMOVE "//" ^^^ 
