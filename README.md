@@ -1,11 +1,8 @@
 # GetTwitchClips
 
-THIS REPO HAS DEPENDENCIES, THAT HAVE DANGEROUS ISSUES.. THAT ALSO DONT GET UPDATED VERY OFTEN, THIS IS ARCHIVED.
-BELOW, YOU CAN SEE THE REASON AND THE THINGS WE FOUND WITH THIS CODE.
+This code aims to automate a workflow in which, clips are downloaded from a popular streamer on twitch, then uploaded to a youtube channel, which people with dedication to these streamers often do manually.
 
-This is code aims to automate a workflow in which, clips are downloaded from a popular streamer on twitch, then uploaded to a youtube channel, which people with dedication to these streamers often do by hand.
-This is a cheeky method to (basically) get money from doing nothing..  (only worked around june 2021)
-People knew even the manual way was cheeky, since you'd just repost clips from streamers, but we made it even easier, Our highest peak subscruier count using this code.. was: 2419 subscribers.
+With our code automating the process, we made it even easier to do, our highest peak subscriber count using this code.. was: 700 subscribers.
+Uploading twitch clips to youtube on behalf of the creator, died after 2021. You must remember, the thumbnails still required some user edit, so they werent just random thumbnails from the clip.
 
-
-
+Before the end of the 2021, this little passion project was turned into a CLI with many options and automatically placed all the clip data into a csv, for further use and possibly further automation. Suddenly one morning, a lot of Twitch's API had changed, they had updated the API, so a lot of the code had to be changed in order to fit the new API.
